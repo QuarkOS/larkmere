@@ -76,9 +76,8 @@ float moonIntensity() {
     return intensity * 0.22;
 }
 
-// View-space direction to a sky color. Shared by the sky pass and aerial fog
-// so the horizon and the mist are the same atmosphere.
-vec3 atmosphereColor(vec3 viewDir) {
+// Sky gradient without the sun disc. Fog uses this so the glow cannot white out the ground.
+vec3 atmosphereBase(vec3 viewDir) {
     vec3 dir = safeNormalize(viewDir);
     float height = dot(dir, safeNormalize(upPosition));
 
@@ -97,8 +96,8 @@ vec3 atmosphereColor(vec3 viewDir) {
     float golden = goldenFactor();
     float blueHour = blueHourFactor();
 
-    vec3 zenith = mix(vec3(0.010, 0.014, 0.032), vec3(0.26, 0.44, 0.70), day);
-    vec3 horizon = mix(vec3(0.045, 0.055, 0.090), vec3(0.64, 0.71, 0.76), day);
+    vec3 zenith = mix(vec3(0.010, 0.014, 0.032), vec3(0.18, 0.36, 0.62), day);
+    vec3 horizon = mix(vec3(0.040, 0.050, 0.080), vec3(0.50, 0.60, 0.68), day);
     horizon = mix(horizon, vec3(0.90, 0.52, 0.30), golden * smoothstep(-0.05, 0.20, sunElevation()));
     horizon = mix(horizon, vec3(0.52, 0.40, 0.48), blueHour * 0.80);
 
@@ -109,14 +108,21 @@ vec3 atmosphereColor(vec3 viewDir) {
     vec3 stormHorizon = vec3(0.32, 0.34, 0.36);
     sky = mix(sky, mix(stormHorizon, vec3(0.16, 0.17, 0.19), grad), thunderStrength * 0.75);
 
+    return sky;
+}
+
+// Tight halo around the sun and moon. Wide pow() falloff painted a disc onto flat sky cards.
+vec3 atmosphereColor(vec3 viewDir) {
+    vec3 dir = safeNormalize(viewDir);
+    vec3 sky = atmosphereBase(dir);
+
     vec3 sunDir = safeNormalize(sunPosition);
     float sunDot = clamp(dot(dir, sunDir), 0.0, 1.0);
-    float glow = pow(sunDot, 7.0) * sunIntensity();
-    sky += sunDiscColor() * glow * 0.42;
+    sky += sunDiscColor() * pow(sunDot, 96.0) * sunIntensity() * 0.22;
 
     vec3 moonDir = safeNormalize(moonPosition);
     float moonDot = clamp(dot(dir, moonDir), 0.0, 1.0);
-    sky += moonDiscColor() * pow(moonDot, 12.0) * moonIntensity() * 0.35;
+    sky += moonDiscColor() * pow(moonDot, 64.0) * moonIntensity() * 0.20;
 
     return sky;
 }

@@ -38,6 +38,11 @@ void main() {
         return;
     }
 
-    // Sky and the sunset band share one gradient so they cannot disagree.
+    // Vanilla sunrise/sunset is a tilted card. Painting a radial glow on it
+    // draws a square with rings in the sky. The dome gradient covers that light.
+    if (renderStage == MC_RENDER_STAGE_SUNSET) {
+        discard;
+    }
+
     outColor = vec4(atmosphereColor(safeNormalize(viewPos)), 1.0);
 }

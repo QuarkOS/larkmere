@@ -12,15 +12,24 @@ layout(location = 0) out vec4 outColor;
 
 void main() {
     vec4 tex = texture(gtexture, texcoord) * tint;
-    if (tex.a < 0.10) {
+    if (tex.a < 0.40) {
         discard;
     }
 
     vec3 color = tex.rgb;
     if (renderStage == MC_RENDER_STAGE_SUN) {
-        color *= sunDiscColor() * 5.5 * mix(1.0, 0.35, rainStrength);
+        vec2 p = texcoord * 2.0 - 1.0;
+        if (dot(p, p) > 0.90) {
+            discard;
+        }
+        float lum = dot(tex.rgb, vec3(0.30, 0.59, 0.11));
+        if (lum < 0.08) {
+            discard;
+        }
+        // Flat disc color. Multiplying the ringed sun texture blows the quad up.
+        color = sunDiscColor() * 1.65 * mix(1.0, 0.40, rainStrength);
     } else if (renderStage == MC_RENDER_STAGE_MOON) {
-        color *= moonDiscColor() * 1.6 * mix(1.0, 0.40, rainStrength);
+        color *= moonDiscColor() * 1.25 * mix(1.0, 0.45, rainStrength);
     }
 
     outColor = vec4(color, 1.0);

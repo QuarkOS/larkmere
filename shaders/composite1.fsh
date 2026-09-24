@@ -11,7 +11,7 @@ layout(location = 0) out vec4 outColor;
 void main() {
     vec3 color = texture(colortex0, texcoord).rgb;
     float luma = dot(color, vec3(0.22, 0.67, 0.11));
-    float threshold = 1.05;
+    float threshold = 1.55;
     float knee = 0.28;
     float over = luma - threshold;
     float soft = clamp(over + knee, 0.0, 2.0 * knee);

@@ -29,7 +29,7 @@ Default options are the Balanced look. In shader settings you can also pick Fast
 | Volumetric light | Shafts from the shadow map. On by default. |
 | Volumetric steps | 6, 12, or 24 samples along each ray. |
 | Bloom strength | Halo on the sun, lava, and other bright surfaces. |
-| Fog density | How fast valley mist and distance haze build up. |
+| Fog density | How fast valley mist and distance haze build up. Nearby ground stays clear at the default. |
 
 ## Pipeline
 
@@ -46,7 +46,7 @@ The pack is a small deferred path. Shared code lives in `shaders/lib/`.
 
 ## Limits
 
-This environment cannot launch Minecraft, so the pack has not been seen in game. File layout, option names, include paths, and GLSL syntax were checked offline.
+An in-game noon frame showed a white fog wash and a tilted sun card. Fog now starts past the nearby ground, the sunset card is discarded, and the sun stays a small camera-facing disc. This environment still cannot launch Minecraft, so that frame was not re-checked here. File layout, option names, include paths, and GLSL syntax were checked offline.
 
 - Reflections are a few screen-space steps and then the sky. They miss anything off screen.
 - No caustics, parallax, or temporal anti-aliasing.

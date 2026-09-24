@@ -56,9 +56,14 @@ vec3 volumetricShafts(vec2 uv) {
     float sunPart = sunIntensity();
     float moonPart = moonIntensity();
     vec3 tint = sunPart >= moonPart ? sunDiscColor() : moonDiscColor();
-    float density = 0.62 * gate;
+    // Open noon air is clear. Shafts belong in forests and toward a low sun.
+    float elev = shadowLightElevation();
+    float lowSun = smoothstep(0.02, 0.12, elev) * (1.0 - smoothstep(0.35, 0.72, elev));
+    float density = 0.28 * gate * mix(0.22, 1.0, lowSun);
     density *= mix(1.0, 0.40, rainStrength);
-    density *= smoothstep(0.0, 0.10, shadowLightElevation());
+    if (depth > 0.98) {
+        density *= 0.12;
+    }
     return tint * accum * density * (sunPart + moonPart);
 #endif
 }

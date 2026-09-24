@@ -1,2 +1,2 @@
 #version 330 compatibility
-#include "/lib/gbuffer_vertex.glsl"
+#include "/lib/sky_vertex.glsl"

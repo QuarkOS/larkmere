@@ -1,0 +1,43 @@
+profile.comment=Fast drops shafts and uses a smaller shadow map. Balanced is the default look. Cinematic lengthens the march and softens shadows.
+
+option.VOLUMETRIC_LIGHT=Volumetric light
+option.VOLUMETRIC_LIGHT.comment=Shafts of light from the shadow map, strongest in trees and at a low sun.
+
+option.shadowMapResolution=Shadow resolution
+option.shadowMapResolution.comment=Size of the shadow map. Higher is sharper and costs more.
+
+option.SHADOW_SOFTNESS=Shadow softness
+option.SHADOW_SOFTNESS.comment=How wide the soft edge of a shadow is.
+
+option.VOL_STEPS=Volumetric steps
+option.VOL_STEPS.comment=Samples along each view ray. More steps, cleaner shafts.
+
+option.BLOOM_STRENGTH=Bloom strength
+option.BLOOM_STRENGTH.comment=Halo on the sun, lava, and other bright surfaces.
+
+option.FOG_DENSITY=Fog density
+option.FOG_DENSITY.comment=How quickly valley mist and aerial haze thicken with distance.
+
+value.shadowMapResolution.1024=Low
+value.shadowMapResolution.2048=Medium
+value.shadowMapResolution.4096=High
+
+value.SHADOW_SOFTNESS.0.50=Tight
+value.SHADOW_SOFTNESS.1.00=Soft
+value.SHADOW_SOFTNESS.1.60=Wide
+
+value.VOL_STEPS.6=Short
+value.VOL_STEPS.12=Medium
+value.VOL_STEPS.24=Long
+
+value.BLOOM_STRENGTH.0.00=Off
+value.BLOOM_STRENGTH.0.15=Gentle
+value.BLOOM_STRENGTH.0.35=Soft
+value.BLOOM_STRENGTH.0.55=Strong
+value.BLOOM_STRENGTH.0.80=Heavy
+
+value.FOG_DENSITY.0.40=Thin
+value.FOG_DENSITY.0.70=Light
+value.FOG_DENSITY.1.00=Valley
+value.FOG_DENSITY.1.40=Thick
+value.FOG_DENSITY.1.80=Dense

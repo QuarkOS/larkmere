@@ -37,9 +37,27 @@ float sampleShadow(vec3 playerPos, vec3 worldNormal) {
     float bias = max(0.0016 * (1.0 - facing), 0.00045);
     float texel = SHADOW_SOFTNESS / float(shadowMapResolution);
 
+    // Wider penumbra when the occluder is farther from the receiver.
+    float spread = texel;
+    float blockerSum = 0.0;
+    float blockerCount = 0.0;
+    float search = texel * 3.2;
+    for (int i = 0; i < 8; i++) {
+        float closest = texture(shadowtex0, uv.xy + SHADOW_DISK[i] * search).r;
+        if (closest < uv.z - bias) {
+            blockerSum += closest;
+            blockerCount += 1.0;
+        }
+    }
+    if (blockerCount > 0.5) {
+        float avg = blockerSum / blockerCount;
+        float penumbra = clamp((uv.z - avg) / max(avg, 1e-4), 0.0, 1.0);
+        spread *= mix(0.70, 2.40, smoothstep(0.0, 0.07, penumbra));
+    }
+
     float lit = 0.0;
     for (int i = 0; i < 8; i++) {
-        float closest = texture(shadowtex0, uv.xy + SHADOW_DISK[i] * texel).r;
+        float closest = texture(shadowtex0, uv.xy + SHADOW_DISK[i] * spread).r;
         lit += closest < uv.z - bias ? 0.0 : 1.0;
     }
     lit /= 8.0;

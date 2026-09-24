@@ -1,8 +1,6 @@
 # Larkmere
 
-An original Iris shader pack for Minecraft Java **1.21.11**. The look is a quiet valley: pewter mist that thickens with distance, long soft shadows, warm light when the sun is low, and water that holds the sky.
-
-It is not a cartoon pack and not a neon pack. Shadows stay cool. Noon is clear rather than yellow. Rain darkens the air and the ground. Nights stay readable.
+An original Iris shader pack for Minecraft Java **1.21.11**. The look is a quiet valley at noon: saturated ground in the foreground, cool shade, and pewter mist that starts past the first 24 blocks. The sun is a small disc. When it sits low, the horizon warms and light shafts show. Water reflects the sky. Rain darkens the air and wets surfaces. Nights stay readable.
 
 ## Requirements
 
@@ -35,18 +33,18 @@ Default options are the Balanced look. In shader settings you can also pick Fast
 
 The pack is a small deferred path. Shared code lives in `shaders/lib/`.
 
-1. **Shadow.** The world is drawn from the sun or moon into a shadow map. Leaves cut out. Water, rain, and the hand do not. A little distortion spends more texels near the camera. Shadows are an 8-tap soft sample.
+1. **Shadow.** The world is drawn from the sun or moon into a shadow map. Leaves cut out. Water, rain, and the hand do not. A little distortion spends more texels near the camera. An 8-tap sample stays tight at the contact and softens when the occluder is farther away.
 2. **Gbuffers.** Terrain, entities, and block entities write albedo, a view-space normal, and lightmap / material into `colortex0`–`colortex2`. The sky, sun, moon, and clouds are shaded on their own.
-3. **Deferred.** One fullscreen pass lights opaque pixels: warm sun or cool moon, blue-gray sky fill, warm block light, wet surfaces in rain, then aerial perspective. The lit image is copied to `colortex5`.
-4. **Water.** Runs after deferred. Refraction reads `colortex5` (gbuffers cannot sample `colortex0`–`3`). Absorption, a short screen-space reflection, and a sky fallback sit under a Fresnel mix. Rain raises the chop. Lava is emissive. Ice is a harder, clearer surface. Other translucents tint the scene behind them.
-5. **Composite.** If volumetric light is on, a short ray march through the shadow map adds shafts, mostly in forests and toward a low sun. Three more passes extract and blur bloom at half resolution.
-6. **Final.** Bloom is added, rain and thunder settle the grade, and a filmic curve plus gamma writes the frame.
+3. **Deferred.** One fullscreen pass lights opaque pixels in linear color. The sun is the warm key. Shade is cool skylight, with a little warm bounce from the ground. Block light stays tungsten. Wet surfaces darken and pick up a highlight. Aerial perspective then desaturates distance into pewter mist, starting past 24 blocks. The lit image is copied to `colortex5`.
+4. **Water.** Runs after deferred. Refraction reads `colortex5` (gbuffers cannot sample `colortex0`–`3`). Shallow water stays clear. Deeper water goes dark teal. A Fresnel mix adds a short screen-space reflection, then the sky. Rain raises the chop and breaks the mirror. Lava is emissive. Ice is a harder, clearer surface. Other translucents tint the scene behind them.
+5. **Composite.** If volumetric light is on, a short ray march through the shadow map adds shafts. They stay faint at noon and thicken toward a low sun. Three more passes extract and blur bloom at half resolution. The bloom threshold is high at noon.
+6. **Final.** Bloom is added, stronger when the sun is low. Rain and thunder settle the grade. A filmic shoulder compresses highlights without lifting gray mist, then gamma writes the frame.
 
 `sunPathRotation` is -15° so shadows stay long at midday.
 
 ## Limits
 
-An in-game noon frame showed a white fog wash and a tilted sun card. Fog now starts past the nearby ground, the sunset card is discarded, and the sun stays a small camera-facing disc. This environment still cannot launch Minecraft, so that frame was not re-checked here. File layout, option names, include paths, and GLSL syntax were checked offline.
+Lighting, sky, fog, water, and the grade were rewritten so noon stays a readable valley: cool shade, a small sun disc, and pewter mist past 24 blocks. The vanilla sunset card is still discarded. This environment cannot launch Minecraft, so the frame was not seen in game. Fragment shaders were syntax-checked with glslang after resolving includes.
 
 - Reflections are a few screen-space steps and then the sky. They miss anything off screen.
 - No caustics, parallax, or temporal anti-aliasing.

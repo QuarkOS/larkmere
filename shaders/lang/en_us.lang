@@ -1,7 +1,7 @@
 profile.comment=Fast drops shafts and uses a smaller shadow map. Balanced is the default look. Cinematic lengthens the march and softens shadows.
 
 option.VOLUMETRIC_LIGHT=Volumetric light
-option.VOLUMETRIC_LIGHT.comment=Shafts of light from the shadow map, strongest in trees and at a low sun.
+option.VOLUMETRIC_LIGHT.comment=Shafts of light from the shadow map. Faint at noon, stronger when the sun is low.
 
 option.shadowMapResolution=Shadow resolution
 option.shadowMapResolution.comment=Size of the shadow map. Higher is sharper and costs more.
@@ -13,10 +13,10 @@ option.VOL_STEPS=Volumetric steps
 option.VOL_STEPS.comment=Samples along each view ray. More steps, cleaner shafts.
 
 option.BLOOM_STRENGTH=Bloom strength
-option.BLOOM_STRENGTH.comment=Halo on the sun, lava, and other bright surfaces.
+option.BLOOM_STRENGTH.comment=Halo on the sun, lava, and other bright surfaces. Quieter at noon than at sunset.
 
 option.FOG_DENSITY=Fog density
-option.FOG_DENSITY.comment=How quickly valley mist and aerial haze thicken with distance.
+option.FOG_DENSITY.comment=How quickly pewter mist thickens after the first 24 blocks. Nearby ground stays clear.
 
 value.shadowMapResolution.1024=Low
 value.shadowMapResolution.2048=Medium

@@ -17,8 +17,9 @@ void main() {
         discard;
     }
 
-    vec3 tinted = flake.rgb * mix(vec3(0.78, 0.82, 0.88), vec3(0.92, 0.94, 0.96), 1.0 - rainStrength);
+    vec3 tinted = srgbToLinear(flake.rgb);
+    tinted *= mix(vec3(0.70, 0.76, 0.84), vec3(0.90, 0.93, 0.96), 1.0 - rainStrength);
     tinted = applyAerial(tinted, playerPos, viewPos, 1.0);
-    float alpha = flake.a * mix(0.70, 0.45, rainStrength);
+    float alpha = flake.a * mix(0.72, 0.42, rainStrength);
     outColor = vec4(tinted, alpha);
 }

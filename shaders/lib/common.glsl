@@ -37,6 +37,11 @@ vec3 safeNormalize(vec3 v) {
     return v / max(length(v), 1e-4);
 }
 
+// Atlas and biome tints are sRGB. Lighting and fog stay linear after this.
+vec3 srgbToLinear(vec3 c) {
+    return pow(clamp(c, vec3(0.0), vec3(1.0)), vec3(2.2));
+}
+
 // gl_TextureMatrix[1] maps the raw lightmap into roughly [0.03125, 0.96875].
 vec2 decodeLightmap(vec2 lmcoord) {
     return clamp((lmcoord - 0.03125) / 0.9375, vec2(0.0), vec2(1.0));

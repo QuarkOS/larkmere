@@ -15,6 +15,6 @@ void main() {
     if (color.a < 0.01) {
         discard;
     }
-    outColor = vec4(color.rgb, color.a);
+    outColor = vec4(srgbToLinear(color.rgb), color.a);
     outData = vec4(0.0, 0.0, 0.0, 1.0);
 }

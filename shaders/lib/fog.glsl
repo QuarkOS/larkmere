@@ -3,56 +3,57 @@
 
 #include "/lib/sky.glsl"
 
-// Distance haze plus a thin pool of mist below the camera.
-// Nearby ground stays clear. The far valley still fades.
+// Pewter aerial perspective. The first 24 blocks stay clear.
+// Farther air desaturates, then fades toward a capped mist color.
 vec3 applyAerial(vec3 color, vec3 playerPos, vec3 viewPos, float skyLight) {
     float dist = length(viewPos);
     vec3 dir = safeNormalize(viewPos);
-    float elev = sunElevation();
-    float dawn = exp(-pow((elev - 0.02) / 0.14, 2.0));
+    bool overworldAir = isEyeInWater == 0 && hasSkylight;
 
-    float start = 28.0 / max(FOG_DENSITY, 0.35);
-    float hazeDist = max(dist - start, 0.0);
+    float nearStart = 24.0;
+    float hazeDist = overworldAir ? max(dist - nearStart, 0.0) : dist;
 
-    float density = 0.0032 * FOG_DENSITY;
-    density *= 1.0 + rainStrength * 1.70 + dawn * 0.85;
-    density *= mix(1.0, 1.35, thunderStrength * 0.5);
+    float density = 0.0072 * FOG_DENSITY;
+    density *= 1.0 + rainStrength * 1.25;
+    density *= 1.0 + (hasSkylight ? goldenFactor() : 0.0) * 0.28;
+    density *= mix(1.0, 1.20, thunderStrength);
 
-    if (isEyeInWater > 0) {
-        hazeDist = dist;
-        if (isEyeInWater == 1) {
-            density *= 9.0;
-        } else if (isEyeInWater == 2) {
-            density *= 14.0;
-        } else {
-            density *= 7.0;
-        }
-    } else if (hasSkylight) {
-        density *= mix(0.12, 1.0, smoothstep(0.04, 0.32, skyLight));
+    if (isEyeInWater == 1) {
+        density *= 8.0;
+    } else if (isEyeInWater == 2) {
+        density *= 12.0;
+    } else if (isEyeInWater == 3) {
+        density *= 6.5;
+    } else if (!hasSkylight) {
+        density *= 2.4;
+    } else {
+        density *= mix(0.10, 1.0, smoothstep(0.05, 0.35, skyLight));
     }
 
     float aerial = 1.0 - exp(-hazeDist * density);
 
-    if (isEyeInWater == 0 && hasSkylight) {
-        float below = max(-dot(viewPos, safeNormalize(upPosition)), 0.0);
-        float valley = (1.0 - exp(-below / 32.0)) * smoothstep(start, start + 48.0, dist);
-        valley *= mix(0.70, 1.0, dawn);
-        valley *= 1.0 - rainStrength * 0.20;
-        aerial += valley * 0.16 * FOG_DENSITY;
+    if (overworldAir) {
+        vec3 up = safeNormalize(upPosition);
+        float below = max(-dot(viewPos, up), 0.0);
+        float valley = (1.0 - exp(-below / 26.0)) * smoothstep(nearStart, nearStart + 40.0, dist);
+        valley *= mix(0.65, 1.0, goldenFactor());
+        valley *= mix(1.0, 0.75, rainStrength);
+        aerial += valley * 0.20 * FOG_DENSITY;
     }
 
-    float cap = isEyeInWater == 0 ? 0.82 : 0.96;
+    float cap = overworldAir ? mix(0.76, 0.86, rainStrength) : 0.94;
     aerial = clamp(aerial, 0.0, cap);
 
-    vec3 fogCol = atmosphereBase(dir);
-    fogCol *= 0.88;
+    float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
+    color = mix(color, vec3(luma), clamp(aerial * 0.38, 0.0, 0.38));
 
+    vec3 fogCol = valleyMistColor(dir);
     if (isEyeInWater == 1) {
-        fogCol = vec3(0.04, 0.14, 0.16);
+        fogCol = vec3(0.020, 0.085, 0.095);
     } else if (isEyeInWater == 2) {
-        fogCol = vec3(0.55, 0.16, 0.03);
+        fogCol = vec3(0.42, 0.10, 0.015);
     } else if (isEyeInWater == 3) {
-        fogCol = vec3(0.55, 0.62, 0.66);
+        fogCol = vec3(0.45, 0.50, 0.54);
     }
 
     return mix(color, fogCol, aerial);

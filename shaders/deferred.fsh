@@ -35,8 +35,10 @@ void main() {
     vec3 worldNormal = safeNormalize(mat3(gbufferModelViewInverse) * (texture(colortex1, texcoord).rgb * 2.0 - 1.0));
 
     vec3 lit;
+    // Clouds already carry mist from their own pass. The sky is the unlit
+    // far field: fogging it washes the dome back over the valley.
     if (material > 0.90) {
-        lit = applyAerial(albedo, player, view, 1.0);
+        lit = albedo;
     } else if (material < 0.10) {
         lit = albedo;
         if (isEyeInWater > 0) {
